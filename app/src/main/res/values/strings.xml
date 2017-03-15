@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Smart School</string>
+    <string name="title_activity_list_class">ListClassActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="i_m_danh">Điểm danh</string>
+</resources>

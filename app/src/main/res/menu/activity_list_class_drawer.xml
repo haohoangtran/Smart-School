@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_list_class"
+            android:icon="@drawable/ic_class_white_24px"
+            android:title="Danh sách lớp" />
+        <item
+            android:id="@+id/nav_tkb"
+            android:icon="@drawable/ic_date_range_black_24px"
+            android:title="Lịch giảng dạy" />
+        <item
+            android:id="@+id/nav_checkin"
+            android:icon="@drawable/ic_assignment_ind_black_24px"
+            android:title="Danh sách điểm danh" />
+    </group>
+
+    <item android:title="Thêm">
+        <menu>
+            <item
+                android:id="@+id/nav_feedback"
+                android:icon="@drawable/ic_record_voice_over_black_24px"
+                android:title="Phản hồi" />
+            <item
+                android:id="@+id/nav_about_us"
+                android:icon="@drawable/ic_accessibility_black_24px"
+                android:title="Về chúng tôi" />
+        </menu>
+    </item>
+
+</menu>
