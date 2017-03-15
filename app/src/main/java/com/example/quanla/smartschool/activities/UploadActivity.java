@@ -198,9 +198,9 @@ public class UploadActivity extends AppCompatActivity {
     @Subscribe
     public void onIndentifyPerson(IdentifySuccusEvent event) {
         List<IndentifyRespon> indentifyRespons = event.getIndentifyRespons();
-        Log.e(TAG, String.format("onIndentifyPerson: %s", "Xác minh người là ai!") );
+        Log.e(TAG, String.format("onIndentifyPerson: %s", "Xác minh người là ai!"));
         List<Student> students = new Vector<>();
-        if (indentifyRespons.size()!=0) {
+        if (indentifyRespons.size() != 0) {
             for (int i = 0; i < indentifyRespons.size(); i++) {
                 List<PersionId> persionIds = indentifyRespons.get(i).getPersonsList();
                 for (int j = 0; j < persionIds.size(); j++) {
@@ -240,19 +240,15 @@ public class UploadActivity extends AppCompatActivity {
                                         .into(imgPhoto);
                             }
                         });
-
-
                         EventBus.getDefault().post(new UploadPersonFaceToServerEvent(student));
-                    } else {
-                        Toast.makeText(this, "Cannot indentify anyone", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
             for (int i = 0; i < students.size(); i++) {
-
                 Log.e(TAG, String.format("onIndentifyPerson: Phát hiện ra: %s", students.get(i).toString()));
-
             }
+        } else {
+            Toast.makeText(this, "Cannot indentify anyone", Toast.LENGTH_SHORT).show();
         }
         path = null;
     }
@@ -267,7 +263,7 @@ public class UploadActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_TAKE_PHOTO);
                 Log.d(TAG, "2");
             } catch (Exception e) {
-                Log.e(TAG, String.format("doAction: %s", e.toString()) );
+                Log.e(TAG, String.format("doAction: %s", e.toString()));
             }
         } else {
             File file = getFile();
@@ -275,7 +271,6 @@ public class UploadActivity extends AppCompatActivity {
             startActivityForResult(intent, REQUEST_TAKE_PHOTO);
         }
     }
-
 
     private File getFile() {
         File foder = new File("sdcard/camera_app");
@@ -293,6 +288,7 @@ public class UploadActivity extends AppCompatActivity {
                         "api_key", "767781774363334",
                         "api_secret", "AC5_uhn8LY2JaiWPeONIhz6ZLPg")
         );
+
         uploadResult = null;
         try {
             uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
@@ -305,7 +301,6 @@ public class UploadActivity extends AppCompatActivity {
         }
     }
 
-
     @Subscribe
     public void onUploadImageSuccus(UploadImageSuccusEvent event) {
         Log.e(TAG, "onUploadImageSuccus: vào event");
@@ -314,13 +309,13 @@ public class UploadActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<FaceId>> call, Response<List<FaceId>> response) {
                 List<FaceId> faceIds = response.body();
-                if (faceIds.size()==0){
+                if (faceIds.size() == 0) {
+                    cvInformation.setVisibility(View.INVISIBLE);
+                    ibRotationLeft.setVisibility(View.INVISIBLE);
+                    ibRotationRight.setVisibility(View.INVISIBLE);
                     Toast.makeText(UploadActivity.this, "Không có khuôn mặt nào trong ảnh", Toast.LENGTH_SHORT).show();
                     progress.dismiss();
-                    txtDoTincay.setVisibility(View.INVISIBLE);
-                    txtID.setVisibility(View.INVISIBLE);
-                    txtName.setVisibility(View.INVISIBLE);
-                }else {
+                } else {
                     EventBus.getDefault().post(new GetFaceIdSuccusEvent(faceIds));
                 }
             }
