@@ -24,6 +24,7 @@ import com.example.quanla.smartschool.eventbus.GetDataSuccusEvent;
 import com.example.quanla.smartschool.eventbus.GetStudentSuccusEvent;
 import com.example.quanla.smartschool.networks.NetContextLogin;
 import com.example.quanla.smartschool.networks.services.CheckinService;
+import com.example.quanla.smartschool.sharePrefs.SharedPrefs;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,7 +47,7 @@ public class StudentListActivity extends AppCompatActivity {
     RecyclerView rv_list;
     @BindView(R.id.fab_check)
     FloatingActionButton fab;
-
+    String user="";
     StudentListAdapter studentListAdapter = new StudentListAdapter();
 
     @Override
@@ -54,6 +55,7 @@ public class StudentListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_list);
         ButterKnife.bind(this);
+        user= SharedPrefs.getInstance().getLoginCredentials().getUsername();
         EventBus.getDefault().register(this);
         progress = ProgressDialog.show(this, "Loading",
                 "Please waiting...", true);
@@ -62,13 +64,28 @@ public class StudentListActivity extends AppCompatActivity {
     }
 
     private void addListener() {
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(StudentListActivity.this, UploadActivity.class);
-                startActivity(intent);
-            }
-        });
+        if (!user.equals(ListClassActivity.userKey)) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(StudentListActivity.this, UploadActivity.class);
+                    startActivity(intent);
+                }
+            });
+            Log.e(TAG, "addListener: vào saii" );
+            Log.e(TAG, String.format("addListener: %s", ListClassActivity.userKey) );
+        }
+        else {
+            Log.e(TAG, "addListener: vào đúng" );
+            fab.setImageResource(R.drawable.ic_add_white_24px);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(StudentListActivity.this,AddStudentActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     @Override

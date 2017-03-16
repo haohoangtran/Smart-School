@@ -168,8 +168,6 @@ public class UploadActivity extends AppCompatActivity {
                 intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 Log.d(TAG, "1");
                 doAction();
-
-
             }
         });
     }

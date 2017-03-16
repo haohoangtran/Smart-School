@@ -17,6 +17,8 @@ import com.example.quanla.smartschool.database.model.ClassStudent;
 import com.example.quanla.smartschool.database.model.Student;
 import com.example.quanla.smartschool.database.respon.IndentifyRespon;
 import com.example.quanla.smartschool.eventbus.OnClassClickEvent;
+import com.example.quanla.smartschool.eventbus.OnLongClickEvent;
+import com.example.quanla.smartschool.sharePrefs.SharedPrefs;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -40,7 +42,6 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListHodler> {
 
     public ClassListAdapter(Context context) {
         this.context = context;
-
     }
 
 
@@ -53,10 +54,18 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListHodler> {
             public void onClick(View v) {
                 DbStudentContext.instance.setIdGroup(classStudent.getPersongroupid());
                 DbStudentContext.instance.setNameGroup(classStudent.getName());
-                Intent intent=new Intent(context,StudentListActivity.class);
+                Intent intent = new Intent(context, StudentListActivity.class);
                 context.startActivity(intent);
             }
         });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                EventBus.getDefault().postSticky(new OnLongClickEvent(classStudent));
+                return false;
+            }
+        });
+
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.example.quanla.smartschool.activities;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,8 +25,13 @@ import com.example.quanla.smartschool.R;
 import com.example.quanla.smartschool.adapter.ClassListAdapter;
 import com.example.quanla.smartschool.database.DbClassContext;
 import com.example.quanla.smartschool.database.DbListCheckin;
+import com.example.quanla.smartschool.database.model.ClassStudent;
 import com.example.quanla.smartschool.eventbus.GetDataFaildedEvent;
 import com.example.quanla.smartschool.eventbus.GetDataSuccusEvent;
+import com.example.quanla.smartschool.eventbus.OnLongClickEvent;
+import com.example.quanla.smartschool.networks.NetContextMicrosoft;
+import com.example.quanla.smartschool.networks.services.ClassService;
+import com.example.quanla.smartschool.sharePrefs.LoginCredentials;
 import com.example.quanla.smartschool.sharePrefs.SharedPrefs;
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -35,14 +42,18 @@ import org.greenrobot.eventbus.ThreadMode;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ListClassActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private  final String TAG = ListClassActivity.class.toString();
+    private final String TAG = ListClassActivity.class.toString();
+    public static final String userKey = "haoht";
     @BindView(R.id.rv_class_list)
     RecyclerView rvClassList;
     ProgressDialog progress;
-    String user="haoht";
+    String user = "";
     @BindView(R.id.fab)
     FloatingActionButton fab;
 
@@ -51,15 +62,12 @@ public class ListClassActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_class);
         EventBus.getDefault().register(this);
+//        SharedPrefs.getInstance().putLogin(new LoginCredentials(userKey,"12313","!@312412"));
         ButterKnife.bind(this);
-//            user = SharedPrefs.getInstance().getLoginCredentials().getUsername();
-            Log.e(TAG, "onCreate: vào đây" );
-            if (user.equals("haoht")) {
-                Log.e(TAG, "onCreate: Vào tiếp" );
-                fab.setVisibility(View.VISIBLE);
-            }
-
-
+        user = SharedPrefs.getInstance().getLoginCredentials().getUsername();
+        if (user.equals(userKey)) {
+            fab.setVisibility(View.VISIBLE);
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -73,10 +81,57 @@ public class ListClassActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         setupUI();
     }
+
     @OnClick(R.id.fab)
-    public void onFabClick(){
-        Intent intent=new Intent(this,AddClassActivity.class);
+    public void onFabClick() {
+        Intent intent = new Intent(this, AddClassActivity.class);
         startActivity(intent);
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void OnDeleteGroup(OnLongClickEvent e) {
+        if (user.equals(userKey)) {
+            deleteClassList(e.getClassStudent());
+            EventBus.getDefault().removeStickyEvent(OnLongClickEvent.class);
+        }
+    }
+
+    public void deleteClassList(final ClassStudent classStudent) {
+        new AlertDialog.Builder(this)
+                .setTitle("Xoá lớp")
+                .setMessage("Xác nhận xoá lớp này?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog1, final int which) {
+                        ClassService classService = NetContextMicrosoft.instance.create(ClassService.class);
+                        classService.deleteGroupFace(classStudent.getPersongroupid()).enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                if (response.code() == 200) {
+                                    Toast.makeText(ListClassActivity.this, "Xoá thành công", Toast.LENGTH_SHORT).show();
+                                    DbClassContext.instance.getAllGroup();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                Toast.makeText(ListClassActivity.this, "Xoá lỗi!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        DbClassContext.instance.getAllGroup();
     }
 
     public void setupUI() {
@@ -116,7 +171,6 @@ public class ListClassActivity extends AppCompatActivity
         Toast.makeText(this, "Load failed", Toast.LENGTH_SHORT).show();
         EventBus.getDefault().removeStickyEvent(GetDataFaildedEvent.class);
     }
-
 
     @Override
     public void onBackPressed() {

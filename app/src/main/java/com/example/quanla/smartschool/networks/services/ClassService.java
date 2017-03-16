@@ -23,10 +23,10 @@ import retrofit2.http.Url;
 
 public interface ClassService {
     @PUT("persongroups/{personGroupId}")
-    Call<String> addNewGroupFace(@Path("personGroupId") String personGroupId, @Body AddNewGroupBody addNewGroupBody);
+    Call<Void> addNewGroupFace(@Path("personGroupId") String personGroupId, @Body AddNewGroupBody addNewGroupBody);
 
     @DELETE("persongroups/{personGroupId}")
-    Call<String> deleteGroupFace(@Path("personGroupId") String personGroupId);
+    Call<Void> deleteGroupFace(@Path("personGroupId") String personGroupId);
 
     @GET("persongroups/{personGroupId}")
     Call<GetPersionGroupResponJSON> getGroupFace(@Path("personGroupId") String personGroupId);
