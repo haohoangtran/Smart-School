@@ -149,6 +149,7 @@ public class LoginActivity extends AppCompatActivity {
     private void gotoMainActivity() {
         Intent intent = new Intent(this, ListClassActivity.class);
         startActivity(intent);
+        intent.putExtra("name",username);
         overridePendingTransition(R.transition.slide_in, R.transition.slide_out);
     }
 

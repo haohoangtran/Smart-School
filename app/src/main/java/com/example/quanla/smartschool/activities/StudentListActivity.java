@@ -110,7 +110,6 @@ public class StudentListActivity extends AppCompatActivity {
         EventBus.getDefault().removeStickyEvent(GetStudentSuccusEvent.class);
 
     }
-
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onDataLoadComplete(GetDataSuccusEvent event) {
         progress.dismiss();

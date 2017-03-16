@@ -51,7 +51,6 @@ public class NetContextMicrosoft {
     }
 
     class HeaderInterceptor implements Interceptor {
-
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request()
