@@ -21,6 +21,7 @@ import com.example.quanla.smartschool.database.model.Checkin;
 import com.example.quanla.smartschool.database.model.StudentIdCheckIn;
 import com.example.quanla.smartschool.eventbus.GetDataFaildedEvent;
 import com.example.quanla.smartschool.eventbus.GetDataSuccusEvent;
+import com.example.quanla.smartschool.eventbus.GetStudentSuccusEvent;
 import com.example.quanla.smartschool.networks.NetContextLogin;
 import com.example.quanla.smartschool.networks.services.CheckinService;
 
@@ -39,12 +40,15 @@ import retrofit2.Response;
 
 public class StudentListActivity extends AppCompatActivity {
     private static final String TAG = StudentListActivity.class.toString();
-    public static List<StudentIdCheckIn> studentids=new Vector<>();
+    public static List<String> studentids = new Vector<>();
     ProgressDialog progress;
     @BindView(R.id.rv_list)
     RecyclerView rv_list;
     @BindView(R.id.fab_check)
     FloatingActionButton fab;
+
+    StudentListAdapter studentListAdapter = new StudentListAdapter();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,11 +65,12 @@ public class StudentListActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(StudentListActivity.this,UploadActivity.class);
+                Intent intent = new Intent(StudentListActivity.this, UploadActivity.class);
                 startActivity(intent);
             }
         });
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.check_menu, menu);
@@ -74,21 +79,21 @@ public class StudentListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId()==R.id.action_add){
-            if (studentids.size()!=0) {
+        if (item.getItemId() == R.id.action_add) {
+            if (studentids.size() != 0) {
                 final Checkin checkin = new Checkin(DbStudentContext.instance.getNameGroup(), studentids);
-                CheckinService netContextLogin=NetContextLogin.instance.create(CheckinService.class);
+                CheckinService netContextLogin = NetContextLogin.instance.create(CheckinService.class);
                 netContextLogin.addNewCheckin(checkin).enqueue(new Callback<Checkin>() {
                     @Override
                     public void onResponse(Call<Checkin> call, Response<Checkin> response) {
-                        Log.e(TAG, String.format("onResponse: %s", response.body().toString()) );
+                        Log.e(TAG, String.format("onResponse: %s", response.body().toString()));
                         Toast.makeText(StudentListActivity.this, "Thanh cong", Toast.LENGTH_SHORT).show();
                         studentids.clear();
                     }
 
                     @Override
                     public void onFailure(Call<Checkin> call, Throwable t) {
-                        Log.e(TAG, "onFailure: That bai" );
+                        Log.e(TAG, "onFailure: That bai");
                     }
                 });
             }
@@ -98,25 +103,31 @@ public class StudentListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
-    public void onDataLoadComplete(GetDataSuccusEvent event){
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onCheckStudentInServerSuccus(GetStudentSuccusEvent event) {
+        DbStudentContext.instance.setStudentIsHere(event.getStudent());
+        studentListAdapter.notifyDataSetChanged();
+        EventBus.getDefault().removeStickyEvent(GetStudentSuccusEvent.class);
+
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onDataLoadComplete(GetDataSuccusEvent event) {
         progress.dismiss();
-        StudentListAdapter studentListAdapter=new StudentListAdapter();
         rv_list.setAdapter(studentListAdapter);
         rv_list.setLayoutManager(new LinearLayoutManager(this));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         rv_list.addItemDecoration(dividerItemDecoration);
-        Log.e(TAG, String.format("onDataLoadComplete: dsadksa") );
+        Log.e(TAG, String.format("onDataLoadComplete: dsadksa"));
         EventBus.getDefault().removeStickyEvent(GetDataSuccusEvent.class);
-
     }
-    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
-    public void getDataFail(GetDataFaildedEvent event){
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void getDataFail(GetDataFaildedEvent event) {
         progress.dismiss();
         EventBus.getDefault().removeStickyEvent(GetDataFaildedEvent.class);
         Toast.makeText(this, "No internet", Toast.LENGTH_SHORT).show();
     }
-
 
     @Override
     protected void onDestroy() {

@@ -34,7 +34,7 @@ public class NetContextLogin {
 
         retrofit = new Retrofit.Builder()
                 .client(client)
-                .baseUrl("https://uet-hack.herokuapp.com/")
+                .baseUrl("https://thuyloi.herokuapp.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

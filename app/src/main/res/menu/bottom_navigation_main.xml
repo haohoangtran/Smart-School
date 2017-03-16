@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_studetlist"
+        android:enabled="true"
+        android:icon="@drawable/ic_class_white_24px"
+        android:title="Danh sách sinh viên"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_danhsachdd"
+        android:enabled="true"
+        android:icon="@drawable/ic_assignment_ind_black_24px"
+        android:title="Danh sách điểm danh"
+        app:showAsAction="ifRoom" />
+</menu>

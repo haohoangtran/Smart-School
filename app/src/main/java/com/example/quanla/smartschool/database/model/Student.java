@@ -18,6 +18,15 @@ public class Student {
     @SerializedName("userData")
     private String userData;
     private String idStudent;
+    private boolean isHere;
+
+    public boolean isHere() {
+        return isHere;
+    }
+
+    public void setHere(boolean here) {
+        isHere = here;
+    }
 
     public String getUrl() {
         return url;

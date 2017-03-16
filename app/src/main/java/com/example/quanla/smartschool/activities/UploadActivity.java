@@ -41,6 +41,7 @@ import com.example.quanla.smartschool.database.respon.IndentifyRespon;
 import com.example.quanla.smartschool.database.respon.PersionFaceId;
 import com.example.quanla.smartschool.database.respon.PersionId;
 import com.example.quanla.smartschool.eventbus.GetFaceIdSuccusEvent;
+import com.example.quanla.smartschool.eventbus.GetStudentSuccusEvent;
 import com.example.quanla.smartschool.eventbus.IdentifySuccusEvent;
 import com.example.quanla.smartschool.eventbus.UploadImageSuccusEvent;
 import com.example.quanla.smartschool.eventbus.UploadPersonFaceToServerEvent;
@@ -78,8 +79,6 @@ import retrofit2.Response;
 public class UploadActivity extends AppCompatActivity {
     private static final String TAG = UploadActivity.class.toString();
     private int count = 0;
-
-
     private Context context;
     @BindView(R.id.cv_information)
     CardView cvInformation;
@@ -241,6 +240,7 @@ public class UploadActivity extends AppCompatActivity {
                             }
                         });
                         EventBus.getDefault().post(new UploadPersonFaceToServerEvent(student));
+                        EventBus.getDefault().postSticky(new GetStudentSuccusEvent(student));
                     }
                 }
             }

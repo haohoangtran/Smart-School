@@ -58,16 +58,18 @@ public class StudentListHolder extends RecyclerView.ViewHolder {
                 .into(ivStudent);
         tvName.setText(student.getName());
         tvIdStudent.setText(student.getIdStudent());
+        cbCheckin.setChecked(student.isHere());
         cbCheckin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    StudentListActivity.studentids.add(new StudentIdCheckIn(student.getIdStudent()));
+                    StudentListActivity.studentids.add(student.getIdStudent());
                 }
                 else {
-                    StudentListActivity.studentids.remove(new StudentIdCheckIn(student.getIdStudent()));
+                    StudentListActivity.studentids.remove(student.getIdStudent());
                 }
             }
         });
+
     }
 }

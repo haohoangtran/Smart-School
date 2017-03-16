@@ -19,9 +19,9 @@ public class Checkin {
     @SerializedName("date")
     private String date;
     @SerializedName("students")
-    private List<StudentIdCheckIn> studentIds;
+    private List<String> studentIds;
 
-    public Checkin(String name,List<StudentIdCheckIn> strings) {
+    public Checkin(String name,List<String> strings) {
         this.name = name;
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH");
         Date d = new Date();
@@ -37,7 +37,7 @@ public class Checkin {
         return date;
     }
 
-    public List<StudentIdCheckIn> getStudentIds() {
+    public List<String> getStudentIds() {
         return studentIds;
     }
 

@@ -24,7 +24,7 @@ import retrofit2.Response;
 
 public class DbStudentContext {
 
-    public static DbStudentContext instance=new DbStudentContext();
+    public static DbStudentContext instance = new DbStudentContext();
     private final String TAG = DbStudentContext.class.toString();
     private List<Student> students;
     private List<StudentRespon> studentRespon;
@@ -45,13 +45,13 @@ public class DbStudentContext {
 
     public void setIdGroup(String idGroup) {
         this.idGroup = idGroup;
-        Log.e(TAG, String.format("setIdGroup: %s", idGroup) );
+        Log.e(TAG, String.format("setIdGroup: %s", idGroup));
         getAllStudentInGroup();
     }
 
     private DbStudentContext() {
         this.students = new Vector<>();
-        studentRespon=new Vector<>();
+        studentRespon = new Vector<>();
     }
 
     public void addStudent(Student student) {
@@ -78,9 +78,9 @@ public class DbStudentContext {
                     students.add(new Student(studentRespon.get(i)));
                 }
                 for (int i = 0; i < students.size(); i++) {
-                    Log.e(TAG, String.format("onResponse: %s", students.get(i).toString()) );
+                    Log.e(TAG, String.format("onResponse: %s", students.get(i).toString()));
                 }
-               EventBus.getDefault().postSticky(new GetDataSuccusEvent());
+                EventBus.getDefault().postSticky(new GetDataSuccusEvent());
                 Log.e(TAG, "onResponse: Thành");
 
             }
@@ -92,13 +92,21 @@ public class DbStudentContext {
             }
         });
     }
-    public Student findStudent(String personId){
+
+    public Student findStudent(String personId) {
         for (int i = 0; i < students.size(); i++) {
-            if (students.get(i).getPersonid().equals(personId)){
+            if (students.get(i).getPersonid().equals(personId)) {
                 return students.get(i);
             }
         }
         return null;
     }
 
+    public void setStudentIsHere(Student student) {
+        for (int i = 0; i < students.size(); i++) {
+            if (student.getPersonid().equals(students.get(i).getPersonid()) ) {
+                students.get(i).setHere(true);
+            }
+        }
+    }
 }
